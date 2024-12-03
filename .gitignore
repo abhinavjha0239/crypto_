@@ -1,0 +1,5 @@
+# Completely remove JSON credentials  
+*.json  
+!requirements.txt  
+service_account.json  
+.env
