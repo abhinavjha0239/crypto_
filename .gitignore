@@ -1,5 +1,38 @@
-# Completely remove JSON credentials  
+# Sensitive and local files  
 *.json  
 !requirements.txt  
 service_account.json  
-.env
+.env  
+
+# Python-specific ignores  
+__pycache__/  
+*.py[cod]  
+*$py.class  
+*.so  
+
+# Development environments  
+.venv/  
+venv/  
+env/  
+
+# Build and distribution  
+build/  
+dist/  
+*.egg-info/  
+
+# IDE and editor files  
+.idea/  
+.vscode/  
+
+# Logs and databases  
+*.log  
+*.sqlite3  
+
+# Testing and coverage  
+.coverage  
+htmlcov/  
+.pytest_cache/  
+
+# Misc Python artifacts  
+*.manifest  
+*.spec
