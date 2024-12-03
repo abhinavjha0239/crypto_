@@ -8,6 +8,7 @@ import json
 from datetime import datetime, timedelta, timezone  
 import logging  
 
+
 # Configure logging  
 logging.basicConfig(  
     level=logging.INFO,  
@@ -53,6 +54,73 @@ class CryptoTracker:
         except Exception as e:  
             self.logger.error(f"Credentials Error: {e}")  
             raise  
+        
+
+
+    def debug_credentials():  
+            logging.basicConfig(level=logging.DEBUG)  
+            logger = logging.getLogger(__name__)  
+
+            # Updated required keys in uppercase  
+            required_keys = [  
+                'TYPE', 'PROJECT_ID', 'PRIVATE_KEY_ID', 'PRIVATE_KEY',   
+                'CLIENT_EMAIL', 'CLIENT_ID', 'AUTH_URI', 'TOKEN_URI',   
+                'AUTH_PROVIDER_X509_CERT_URL', 'CLIENT_X509_CERT_URL',   
+                'UNIVERSE_DOMAIN', 'GOOGLE_SHEET_URL'  
+            ]  
+
+            # Check environment variables  
+            logger.info("🔍 Checking Environment Variables:")  
+            missing_vars = []  
+
+            for key in required_keys:  
+                value = os.environ.get(key)  
+                if not value:  
+                    logger.warning(f"❌ MISSING: {key}")  
+                    missing_vars.append(key)  
+                else:  
+                    # Mask sensitive information  
+                    masked_value = value[:5] + '...' + value[-5:] if len(value) > 10 else value  
+                    logger.info(f"✅ {key}: {masked_value}")  
+
+            # Create service account dictionary  
+            try:  
+                service_account_dict = {  
+                    'type': os.environ.get('TYPE', ''),  
+                    'project_id': os.environ.get('PROJECT_ID', ''),  
+                    'private_key_id': os.environ.get('PRIVATE_KEY_ID', ''),  
+                    'private_key': os.environ.get('PRIVATE_KEY', '').replace('\\n', '\n'),  
+                    'client_email': os.environ.get('CLIENT_EMAIL', ''),  
+                    'client_id': os.environ.get('CLIENT_ID', ''),  
+                    'auth_uri': os.environ.get('AUTH_URI', ''),  
+                    'token_uri': os.environ.get('TOKEN_URI', ''),  
+                    'auth_provider_x509_cert_url': os.environ.get('AUTH_PROVIDER_X509_CERT_URL', ''),  
+                    'client_x509_cert_url': os.environ.get('CLIENT_X509_CERT_URL', ''),  
+                    'universe_domain': os.environ.get('UNIVERSE_DOMAIN', '')  
+                }  
+
+                # Validate dictionary  
+                logger.info("🔒 Service Account Dictionary Validation")  
+                for key, value in service_account_dict.items():  
+                    if not value:  
+                        logger.warning(f"⚠️ Empty value for key: {key}")  
+
+                # Attempt to create credentials file  
+                with open('service_account.json', 'w') as f:  
+                    json.dump(service_account_dict, f)  
+                
+                logger.info("✅ Temporary Credentials File Created")  
+
+            except Exception as e:  
+                logger.error(f"Credential Setup Failed: {e}")  
+                raise  
+
+            if missing_vars:  
+                logger.critical(f"Missing {len(missing_vars)} environment variables!")  
+                raise ValueError(f"Missing environment variables: {', '.join(missing_vars)}")  
+
+        # Call the debugging function  
+    debug_credentials()
 
     def setup_google_sheets_client(self):  
         """  
